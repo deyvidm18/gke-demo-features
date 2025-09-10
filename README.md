@@ -1,5 +1,3 @@
-Of course. Here is the complete and final `README.md` file in Markdown format for you to copy.
-
 # GKE Advanced Lifecycle & Resizing Demo
 
 A hands-on demonstration of two powerful Google Kubernetes Engine (GKE) features, designed to work on both **GKE Autopilot and Standard** clusters:
@@ -80,6 +78,8 @@ Next, we configure the pod in `gke/deployment.yaml` to provide a "time budget" f
 
 The key is that the `preStop` sleep (45s) is shorter than the grace period (60s), which leaves **15 seconds of dedicated time for our application's `handle_sigterm` logic to run** after the connection draining is complete.
 
+> For a deep dive into the pod lifecycle, see the official [Kubernetes documentation on Pod Termination](https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#pod-termination).
+
 #### Running the Demo
 
 1.  **Deploy the application** using the manifest designed for this test.
@@ -107,7 +107,11 @@ The key is that the `preStop` sleep (45s) is shorter than the grace period (60s)
 
 ### Feature 2: In-Place Resource Resizing
 
-This part demonstrates how to change a container's resources without a restart.
+This part demonstrates how to manually change a container's resources without a restart.
+
+> This feature was introduced as Beta in Kubernetes v1.33. You can read the official announcement on the [Kubernetes Blog](https://kubernetes.io/blog/2025/05/16/kubernetes-v1-33-in-place-pod-resize-beta/).
+
+#### Running the Demo
 
 1.  **Deploy the application** if it's not already running.
     ```bash
@@ -130,6 +134,30 @@ This part demonstrates how to change a container's resources without a restart.
     ```bash
     kubectl get pod $POD_NAME -o custom-columns="POD:.metadata.name,RESTARTS:.status.containerStatuses[0].restartCount,CPU_REQUEST:.spec.containers[0].resources.requests.cpu,MEM_REQUEST:.spec.containers[0].resources.requests.memory"
     ```
+
+#### Important Note: Vertical Pod Autoscaler (VPA) Integration
+
+It's important to clarify that as of now, the standard Vertical Pod Autoscaler (VPA) **cannot** perform in-place resizing; it will still restart the pod to apply recommendations.
+
+However, work is already underway to integrate this feature. A new `InPlaceOrRecreate` update mode for VPA will allow it to attempt non-disruptive resizes first, falling back to recreation only if needed. This will allow users to benefit from VPA's recommendations with significantly less disruption.
+
+-----
+
+## Further Exploration: The CPU Boost Use Case
+
+The in-place resizing feature you just demonstrated enables a powerful optimization pattern known as **"CPU Boost"**.
+
+Many applications, particularly those with Just-In-Time (JIT) compilers like Java, require significantly more CPU during their initial startup phase than they do during normal operation. The CPU Boost pattern addresses this by:
+
+1.  **Starting High:** The pod is initially deployed with high CPU requests and limits to ensure a fast startup.
+2.  **Resizing Down:** Once the application is fully started, an external process patches the running pod to lower its CPU resources to a more efficient steady-state level—*without a restart*.
+
+This is a real-world application of the exact `kubectl patch` command you used in Feature 2, allowing you to save costs by not overprovisioning resources for the entire lifetime of the pod.
+
+To learn more and see a production-ready implementation:
+
+  * **Read the official Google Cloud Blog post:** [Understanding Kubernetes Dynamic Resource Scaling and CPU Boost](https://cloud.google.com/blog/products/containers-kubernetes/understanding-kubernetes-dynamic-resource-scaling-and-cpu-boost?e=0)
+  * **Explore the open-source implementation:** The [kube-startup-cpu-boost](https://github.com/google/kube-startup-cpu-boost) project on GitHub provides a controller that automates this entire process.
 
 -----
 
