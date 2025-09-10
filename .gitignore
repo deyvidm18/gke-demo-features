@@ -1,0 +1,27 @@
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
+venv/
+pip-wheel-metadata/
+
+# Docker
+.dockerignore
+
+# IDEs and editors
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# Manifest backup files created by the build script
+*.bak
+
+# Local secrets (good practice, even if none are used here)
+*.env

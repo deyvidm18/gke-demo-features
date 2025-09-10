@@ -1,0 +1,12 @@
+apiVersion: "autoscaling.k8s.io/v1"
+kind: VerticalPodAutoscaler
+metadata:
+  # Renamed for clarity to avoid confusion with the in-place demo
+  name: standard-demo-vpa
+spec:
+  targetRef:
+    apiVersion: "apps/v1"
+    kind:       Deployment
+    name:       demo-deployment
+  updatePolicy:
+    updateMode: "Auto" # This tells VPA to automatically apply its recommendations.

@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: load-generator-aggressive
+spec:
+  containers:
+  - name: load-generator
+    image: busybox
+    # This command runs 5 simultaneous, endless loops of wget.
+    # This will generate a much higher and faster load on the demo-service.
+    command:
+      - /bin/sh
+      - -c
+      - |
+        while true; do wget -q -O- http://demo-service/stress; done &
+        while true; do wget -q -O- http://demo-service/stress; done &
+        while true; do wget -q -O- http://demo-service/stress; done &
+        while true; do wget -q -O- http://demo-service/stress; done &
+        while true; do wget -q -O- http://demo-service/stress; done
+    resources:
+      requests:
+        cpu: "250m"
+        memory: "128Mi"
+      limits:
+        cpu: "500m"
+        memory: "256Mi"
+  restartPolicy: Never
