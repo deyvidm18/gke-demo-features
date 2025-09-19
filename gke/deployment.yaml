@@ -17,7 +17,7 @@ spec:
       containers:
       - name: demo-app
         # --- THIS IMAGE PATH WILL BE REPLACED BY THE BUILD SCRIPT ---
-        image: IMAGE_PLACEHOLDER
+        image: us-central1-docker.pkg.dev/sb-dmartinez/docker-images/gke-demo-app:latest
         ports:
         - containerPort: 5000
         # --- THIS SECTION IS REQUIRED FOR IN-PLACE RESIZING ---
@@ -32,7 +32,7 @@ spec:
             memory: "512Mi"
           limits:
             cpu: "250m"
-            memory: "512Mi
+            memory: "512Mi"
         lifecycle:
           preStop:
             # The 'sleep' action is the modern, recommended way to wait.
