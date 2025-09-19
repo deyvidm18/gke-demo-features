@@ -95,9 +95,13 @@ The key is that the `preStop` sleep (45s) is shorter than the grace period (60s)
     ```bash
     kubectl delete pod $POD_NAME
     ```
-4.  **Quickly check the logs** in a third terminal. You have to be fast to catch the message before the container is gone.
+4.  **Check the logs** Use Cloud Loggin to watch the logs in the pod.
     ```bash
-    kubectl logs $POD_NAME
+    echo && \
+    gcloud logging read \
+    'resource.labels.pod_name="'"$POD_NAME"'" AND severity="INFO"' \
+    --format="get(textPayload)" \
+    --limit=2
     ```
 5.  **Observe and Explain:** Point to the watch window. The pod's status will change from `Running` to `Terminating` and will stay that way for the grace period. Then, point to the logs, which will show:
     ```
