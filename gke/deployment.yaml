@@ -17,7 +17,7 @@ spec:
       containers:
       - name: demo-app
         # --- THIS IMAGE PATH WILL BE REPLACED BY THE BUILD SCRIPT ---
-        image: us-central1-docker.pkg.dev/sb-dmartinez/docker-images/gke-demo-app:latest
+        image: IMAGE_PLACEHOLDER
         ports:
         - containerPort: 5000
         # --- THIS SECTION IS REQUIRED FOR IN-PLACE RESIZING ---
