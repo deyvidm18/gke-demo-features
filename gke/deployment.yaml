@@ -6,10 +6,11 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      app: demo
+      app.kubernetes.io/name: demo-app
   template:
     metadata:
       labels:
+        app.kubernetes.io/name: demo-app
         app: demo
     spec:
       # This pod will have a 60-second grace period for termination.
