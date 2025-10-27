@@ -1,0 +1,23 @@
+apiVersion: autoscaling.x-k8s.io/v1alpha1
+kind: StartupCPUBoost
+metadata:
+  name: boost-default
+  namespace: default
+selector:
+  matchExpressions:
+  - key: app.kubernetes.io/name
+    operator: In
+    values: ["demo-app"]
+spec:
+  resourcePolicy:
+    containerPolicies:
+    - containerName: demo-app
+      percentageIncrease:
+        value: 50
+  durationPolicy:
+    # podCondition:
+      # type: Ready
+      # status: "True" 
+    fixedDuration:
+      unit: Seconds
+      value: 20
